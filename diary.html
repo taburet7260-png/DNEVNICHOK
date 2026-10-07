@@ -14,11 +14,16 @@
   :root{
     --bg:#0d0d10; --card:rgba(23,23,28,0.85); --card2:#20202a;
     --text:#f2f2f5; --muted:#8b8b96; --muted2:#5e5e6a;
-    --accent:#6c7bff; --accent-glow:rgba(108,123,255,0.35);
+    --accent:#6c7bff; --accent-dark:#4a5ae8; --accent-glow:rgba(108,123,255,0.35);
     --green:#30d158; --red:#ff453a; --orange:#ff9f0a;
-    --border:#2a2a33; --border2:#1e1e26;
+    --border:#2a2a33; --sheet-bg:#1a1a21;
+    --handle:#3a3a45; --input-focus-bg:#242430; --check-border:#43434f;
     --radius:16px;
-    --rule:rgba(255,255,255,0.045);
+    /* glass */
+    --glass-blur: 20px;
+    --glass-alpha-pct: 70%;
+    --glass-border: rgba(255,255,255,0.14);
+    --glass-highlight: rgba(255,255,255,0.20);
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{height:100%;}
@@ -28,38 +33,66 @@
     display:flex; flex-direction:column; overflow:hidden;
     padding-top:env(safe-area-inset-top);
     -webkit-font-smoothing:antialiased;
+    transition:background .25s, color .25s;
+  }
+
+  /* ---------- GLASS-ОСНОВА ---------- */
+  .glass{
+    background: color-mix(in srgb, var(--card2) var(--glass-alpha-pct, 70%), transparent);
+    -webkit-backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-highlight), inset 0 -1px 0 rgba(0,0,0,0.06);
   }
 
   /* ---------- HEADER ---------- */
-  header{
-    padding:14px 18px 6px;
-    position:relative; z-index:5;
-  }
+  header{padding:14px 18px 6px; position:relative; z-index:5;}
   .top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
   h1{font-size:26px;font-weight:700;letter-spacing:-.6px;}
   .subtitle{font-size:13px;color:var(--muted);margin-top:3px;text-transform:capitalize;}
-  .bell{
-    background:var(--card2); border:none; color:var(--muted);
-    width:40px;height:40px;border-radius:50%;font-size:18px;flex:none;
-    display:flex;align-items:center;justify-content:center;
-    transition:.2s; cursor:pointer;
-  }
-  .bell.on{color:var(--green);background:rgba(48,209,88,.14);}
-  .bell:active{transform:scale(.92);}
+  .header-actions{display:flex;gap:8px;flex:none;}
 
-  /* ---------- VIEW SWITCH (День/Неделя/Месяц) ---------- */
+  .icon-btn{
+    width:42px;height:42px;border-radius:50%;
+    color:var(--text);font-size:17px;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .18s, background .18s;
+    cursor:pointer;
+    /* glass */
+    background: color-mix(in srgb, var(--card2) var(--glass-alpha-pct, 70%), transparent);
+    -webkit-backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-highlight), inset 0 -1px 0 rgba(0,0,0,0.06),
+                0 2px 8px rgba(0,0,0,0.12);
+  }
+  .icon-btn:active{transform:scale(.9);}
+  .icon-btn.on{
+    color:#fff;
+    background: linear-gradient(145deg,
+      color-mix(in srgb, var(--green) 85%, transparent),
+      color-mix(in srgb, var(--green) 60%, transparent));
+    border-color: color-mix(in srgb, var(--green) 45%, transparent);
+  }
+
+  /* ---------- VIEW SWITCH ---------- */
   .view-switch{
     display:flex; gap:4px;
     margin:14px 18px 0;
     padding:4px;
-    background:var(--card2);
-    border-radius:14px;
+    border-radius:16px;
     position:relative; z-index:5;
+    /* glass */
+    background: color-mix(in srgb, var(--card2) var(--glass-alpha-pct, 70%), transparent);
+    -webkit-backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-highlight);
   }
   .view-switch button{
     flex:1;
     padding:9px 6px;
-    border-radius:10px;
+    border-radius:12px;
     border:none;
     background:transparent;
     color:var(--muted);
@@ -70,9 +103,11 @@
     transition:.2s;
   }
   .view-switch button.active{
-    background:var(--accent);
+    background: linear-gradient(145deg,
+      color-mix(in srgb, var(--accent) 92%, transparent),
+      color-mix(in srgb, var(--accent-dark) 92%, transparent));
     color:#fff;
-    box-shadow:0 2px 10px var(--accent-glow);
+    box-shadow: 0 2px 10px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.25);
   }
   .view-switch button:active:not(.active){transform:scale(.96);}
 
@@ -80,62 +115,55 @@
   .stats{
     margin:12px 18px 0;
     padding:12px 16px;
-    border-radius:14px;
-    background:var(--card);
+    border-radius:16px;
     display:flex; align-items:center; gap:12px;
     position:relative; z-index:5;
+    /* glass */
+    background: color-mix(in srgb, var(--card2) var(--glass-alpha-pct, 70%), transparent);
+    -webkit-backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-highlight);
   }
   .ring{width:34px;height:34px;flex:none;}
   .ring circle{fill:none;stroke-width:4;stroke-linecap:round;}
-  .ring .bgc{stroke:var(--card2);}
+  .ring .bgc{stroke:color-mix(in srgb, var(--text) 15%, transparent);}
   .ring .fgc{stroke:var(--green);transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset .4s;}
   .stats b{font-size:15px;}
   .stats span{font-size:12px;color:var(--muted);display:block;}
 
-  /* ---------- MAIN (РАЗЛИНОВКА ЗДЕСЬ) ---------- */
+  /* ---------- MAIN ---------- */
   main{
     flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
     padding:8px 18px 130px;
     position:relative;
-    background-image:
-      repeating-linear-gradient(to bottom,
-        transparent 0px,
-        transparent 35px,
-        var(--rule) 35px,
-        var(--rule) 36px);
-    background-position:0 8px;
   }
   main::-webkit-scrollbar{width:0;}
-
-  /* ---------- GROUP TITLE ---------- */
-  .group-title{
-    font-size:12px;font-weight:700;color:var(--muted);
-    text-transform:uppercase;letter-spacing:.8px;
-    margin:18px 4px 8px;
-  }
-  .group-title:first-child{margin-top:6px;}
 
   /* ---------- TASK CARD ---------- */
   .task{
     display:flex;gap:12px;align-items:flex-start;
-    background:var(--card);
-    backdrop-filter:blur(6px);
-    -webkit-backdrop-filter:blur(6px);
     border-radius:var(--radius);
     padding:14px;margin-bottom:9px;cursor:pointer;
     transition:transform .12s, opacity .2s;
     border-left:3px solid transparent;
+    /* glass */
+    background: color-mix(in srgb, var(--card2) var(--glass-alpha-pct, 70%), transparent);
+    -webkit-backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-highlight);
   }
   .task:active{transform:scale(.985);}
-  .task.p-high{border-left-color:var(--red);}
-  .task.p-normal{border-left-color:var(--accent);}
-  .task.p-low{border-left-color:var(--border);}
+  .task.p-high{border-left-color:var(--red); border-left-width:3px;}
+  .task.p-normal{border-left-color:var(--accent); border-left-width:3px;}
+  .task.p-low{border-left-color:var(--border); border-left-width:3px;}
   .task.done{opacity:.42;}
   .task.done .t-title{text-decoration:line-through;}
 
   .check{
     width:23px;height:23px;flex:none;border-radius:50%;
-    border:2px solid #43434f;background:transparent;
+    border:2px solid var(--check-border);background:transparent;
     display:flex;align-items:center;justify-content:center;
     margin-top:1px;cursor:pointer;transition:.18s;padding:0;
   }
@@ -147,57 +175,52 @@
   .t-title{font-size:15.5px;font-weight:500;line-height:1.35;word-break:break-word;}
   .t-note{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4;word-break:break-word;}
   .t-meta{display:flex;gap:8px;align-items:center;margin-top:6px;font-size:12px;color:var(--muted);flex-wrap:wrap;}
-  .chip{padding:2px 8px;border-radius:8px;background:var(--card2);font-weight:500;}
-  .chip.now{background:rgba(255,159,10,.16);color:var(--orange);}
-  .chip.late{background:rgba(255,69,58,.16);color:var(--red);}
-  .chip.ok{background:rgba(48,209,88,.14);color:var(--green);}
+
+  .chip{
+    padding:2px 8px;border-radius:8px;
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+    font-weight:500;
+  }
+  .chip.now{background:color-mix(in srgb, var(--orange) 22%, transparent);color:var(--orange);}
+  .chip.late{background:color-mix(in srgb, var(--red) 22%, transparent);color:var(--red);}
+  .chip.ok{background:color-mix(in srgb, var(--green) 22%, transparent);color:var(--green);}
 
   /* ---------- EMPTY ---------- */
   .empty{text-align:center;padding:60px 20px;color:var(--muted);}
   .empty .em{font-size:52px;display:block;margin-bottom:14px;opacity:.5;}
   .empty p{font-size:14.5px;line-height:1.5;}
 
-  /* ---------- WEEK VIEW ---------- */
+  /* ---------- WEEK ---------- */
   .week-block{margin-bottom:24px;}
   .week-head{
     display:flex;align-items:baseline;justify-content:space-between;
     margin:0 4px 10px;
     padding-bottom:7px;
-    border-bottom:1px solid var(--border);
+    border-bottom:1px solid var(--glass-border);
   }
-  .wh-day{
-    font-size:12.5px;font-weight:700;
-    text-transform:uppercase;letter-spacing:.8px;
-    color:var(--accent);
-  }
+  .wh-day{font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);}
   .wh-day.today{color:var(--green);}
   .wh-date{font-size:12px;color:var(--muted);}
-  .week-empty{
-    font-size:13px;color:var(--muted2);
-    padding:10px 4px;
-    font-style:italic;
-  }
+  .week-empty{font-size:13px;color:var(--muted2);padding:10px 4px;font-style:italic;}
 
-  /* ---------- MONTH VIEW ---------- */
+  /* ---------- MONTH ---------- */
   .month-nav{
     display:flex;align-items:center;justify-content:space-between;
-    margin:4px 0 16px;
-    padding:0 4px;
+    margin:4px 0 16px;padding:0 4px;
   }
   .mn-btn{
-    width:38px;height:38px;border-radius:50%;
-    background:var(--card2);border:none;color:var(--text);
-    font-size:20px;cursor:pointer;
+    width:40px;height:40px;border-radius:50%;
+    color:var(--text);font-size:20px;cursor:pointer;
     display:flex;align-items:center;justify-content:center;
-    transition:.15s;font-family:inherit;
-    padding-bottom:2px;
+    transition:.15s;font-family:inherit;padding-bottom:2px;
+    background: color-mix(in srgb, var(--card2) var(--glass-alpha-pct, 70%), transparent);
+    -webkit-backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 var(--glass-highlight);
   }
-  .mn-btn:active{transform:scale(.9);background:var(--accent);}
-  .mn-title{
-    font-size:17px;font-weight:700;
-    letter-spacing:-.3px;
-    text-transform:capitalize;
-  }
+  .mn-btn:active{transform:scale(.9);color:#fff;background:var(--accent);}
+  .mn-title{font-size:17px;font-weight:700;letter-spacing:-.3px;text-transform:capitalize;}
 
   .weekdays{
     display:grid;grid-template-columns:repeat(7,1fr);
@@ -205,112 +228,101 @@
     font-size:10.5px;font-weight:700;color:var(--muted2);
     text-align:center;text-transform:uppercase;letter-spacing:.6px;
   }
-
-  .month-grid{
-    display:grid;grid-template-columns:repeat(7,1fr);
-    gap:4px;margin-bottom:22px;
-  }
+  .month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:22px;}
 
   .day-cell{
-    position:relative;
-    aspect-ratio:1;
-    border-radius:11px;
-    background:transparent;
-    border:none;
-    color:var(--text);
-    font-family:inherit;
-    font-size:14px;
-    font-weight:500;
-    cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
-    transition:.15s;
-    padding:0;
+    position:relative;aspect-ratio:1;border-radius:11px;
+    background:transparent;border:none;color:var(--text);
+    font-family:inherit;font-size:14px;font-weight:500;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:.15s;padding:0;
   }
   .day-cell:active{transform:scale(.93);}
   .day-cell.other{color:var(--muted2);}
-  .day-cell.today{
-    color:var(--accent);font-weight:700;
-    box-shadow:inset 0 0 0 1.5px var(--accent);
-  }
+  .day-cell.today{color:var(--accent);font-weight:700;box-shadow:inset 0 0 0 1.5px var(--accent);}
   .day-cell.selected{
-    background:var(--accent);color:#fff;
-    box-shadow:none;
-    font-weight:700;
+    background: linear-gradient(145deg,
+      color-mix(in srgb, var(--accent) 92%, transparent),
+      color-mix(in srgb, var(--accent-dark) 92%, transparent));
+    color:#fff;font-weight:700;
+    box-shadow: 0 2px 8px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.25);
   }
   .day-cell .dn{line-height:1;}
 
-  .dots{
-    position:absolute;bottom:5px;left:0;right:0;
-    display:flex;gap:2.5px;justify-content:center;
-  }
-  .dots span{
-    width:3.5px;height:3.5px;border-radius:50%;
-    background:var(--accent);
-  }
+  .dots{position:absolute;bottom:5px;left:0;right:0;display:flex;gap:2.5px;justify-content:center;}
+  .dots span{width:3.5px;height:3.5px;border-radius:50%;background:var(--accent);}
   .day-cell.other .dots span{background:var(--muted2);}
   .day-cell.selected .dots span{background:#fff;}
-  .day-cell.today:not(.selected) .dots span{background:var(--accent);}
 
   .month-tasks{margin-top:10px;}
   .mt-head{
-    font-size:12px;font-weight:700;text-transform:uppercase;
-    letter-spacing:.7px;color:var(--muted);
-    margin:0 4px 10px;
-    padding-bottom:8px;
-    border-bottom:1px solid var(--border);
-    text-transform:none;
-    font-size:13.5px;
-    letter-spacing:0;
-    color:var(--text);
+    font-size:13.5px;font-weight:700;color:var(--text);
+    margin:0 4px 10px;padding-bottom:8px;
+    border-bottom:1px solid var(--glass-border);
   }
-  .mt-empty{
-    text-align:center;color:var(--muted2);
-    font-size:13.5px;padding:26px 20px;
-    font-style:italic;
-  }
+  .mt-empty{text-align:center;color:var(--muted2);font-size:13.5px;padding:26px 20px;font-style:italic;}
 
   /* ---------- FAB ---------- */
   .fab{
     position:fixed;right:20px;bottom:calc(26px + env(safe-area-inset-bottom));
-    width:60px;height:60px;border-radius:50%;border:none;
-    background:linear-gradient(145deg,#7d8bff,#5a6aff);color:#fff;
-    font-size:30px;font-weight:300;line-height:1;
+    width:62px;height:62px;border-radius:50%;border:none;
+    color:#fff;font-size:30px;font-weight:300;line-height:1;
     display:flex;align-items:center;justify-content:center;
-    box-shadow:0 8px 26px rgba(108,123,255,.45);cursor:pointer;z-index:20;
-    transition:transform .15s;
+    cursor:pointer;z-index:20;transition:transform .15s;
+    background: linear-gradient(145deg,
+      color-mix(in srgb, var(--accent) 92%, transparent),
+      color-mix(in srgb, var(--accent-dark) 92%, transparent));
+    -webkit-backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+    border: 1px solid color-mix(in srgb, #fff 30%, transparent);
+    box-shadow: 0 8px 26px var(--accent-glow),
+                inset 0 1px 0 rgba(255,255,255,0.35);
   }
   .fab:active{transform:scale(.9);}
 
   /* ---------- SHEET ---------- */
   .overlay{
-    position:fixed;inset:0;background:rgba(0,0,0,.55);
+    position:fixed;inset:0;background:rgba(0,0,0,.45);
     backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
     opacity:0;pointer-events:none;transition:.25s;z-index:30;
   }
   .overlay.show{opacity:1;pointer-events:auto;}
+  .overlay-picker{z-index:40;}
+
   .sheet{
     position:fixed;left:0;right:0;bottom:0;z-index:31;
-    background:#1a1a21;border-radius:26px 26px 0 0;
+    border-radius:26px 26px 0 0;
     padding:10px 20px calc(24px + env(safe-area-inset-bottom));
     transform:translateY(105%);
     transition:transform .32s cubic-bezier(.32,.72,0,1);
-    max-height:92vh;overflow-y:auto;
+    max-height:92vh;overflow-y:auto;color:var(--text);
+    background: color-mix(in srgb, var(--sheet-bg) 85%, transparent);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
+    border-top: 1px solid var(--glass-border);
+    box-shadow: 0 -12px 40px rgba(0,0,0,0.35), inset 0 1px 0 var(--glass-highlight);
   }
   .sheet.show{transform:translateY(0);}
-  .handle{width:38px;height:5px;border-radius:3px;background:#3a3a45;margin:0 auto 16px;}
+  .sheet-picker{z-index:41;}
+
+  .handle{width:38px;height:5px;border-radius:3px;background:var(--handle);margin:0 auto 16px;}
   .sheet h2{font-size:20px;font-weight:700;margin-bottom:16px;}
+  .sheet .hint{font-size:13px;color:var(--muted);margin:-10px 0 14px;line-height:1.4;}
 
   label{display:block;font-size:12px;font-weight:600;color:var(--muted);
         text-transform:uppercase;letter-spacing:.5px;margin:14px 0 6px;}
   input[type=text],input[type=date],input[type=time],textarea{
-    width:100%;background:var(--card2);border:1.5px solid transparent;
+    width:100%;background: color-mix(in srgb, var(--text) 7%, transparent);
+    border:1.5px solid transparent;
     border-radius:13px;padding:13px 14px;color:var(--text);
     font-size:16px;font-family:inherit;outline:none;transition:.18s;
     -webkit-appearance:none;appearance:none;
   }
   textarea{resize:none;min-height:64px;line-height:1.4;}
-  input:focus,textarea:focus{border-color:var(--accent);background:#242430;}
+  input:focus,textarea:focus{border-color:var(--accent);background: color-mix(in srgb, var(--text) 10%, transparent);}
   input[type=date],input[type=time]{color-scheme:dark;}
+  body[data-theme="light"] input[type=date],
+  body[data-theme="light"] input[type=time]{color-scheme:light;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 
   .seg{display:flex;gap:8px;}
@@ -319,7 +331,7 @@
     background:transparent;color:var(--muted);font-size:14px;font-weight:500;
     font-family:inherit;cursor:pointer;transition:.18s;
   }
-  .seg button.active{background:var(--card2);color:var(--text);border-color:var(--accent);}
+  .seg button.active{background: color-mix(in srgb, var(--text) 8%, transparent);color:var(--text);border-color:var(--accent);}
   .seg button.active[data-p=high]{border-color:var(--red);color:var(--red);}
   .seg button.active[data-p=low]{border-color:var(--muted);}
 
@@ -329,16 +341,232 @@
     font-family:inherit;cursor:pointer;transition:.15s;
   }
   .btn:active{transform:scale(.97);}
-  .btn-primary{background:var(--accent);color:#fff;}
-  .btn-ghost{background:var(--card2);color:var(--text);}
-  .btn-danger{background:rgba(255,69,58,.15);color:var(--red);flex:0 0 52px;font-size:18px;padding:0;}
-  .btn-cal{background:rgba(48,209,88,.14);color:var(--green);margin-top:10px;flex:1;}
+  .btn-primary{
+    background: linear-gradient(145deg,
+      color-mix(in srgb, var(--accent) 92%, transparent),
+      color-mix(in srgb, var(--accent-dark) 92%, transparent));
+    color:#fff;
+    box-shadow: 0 4px 14px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.25);
+    border: 1px solid color-mix(in srgb, #fff 25%, transparent);
+  }
+  .btn-ghost{
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+    color:var(--text);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+  }
+  .btn-danger{
+    background: color-mix(in srgb, var(--red) 15%, transparent);
+    color:var(--red);flex:0 0 52px;font-size:18px;padding:0;
+    border: 1px solid color-mix(in srgb, var(--red) 25%, transparent);
+  }
+  .btn-cal{
+    background: color-mix(in srgb, var(--green) 15%, transparent);
+    color:var(--green);margin-top:10px;flex:1;
+    border: 1px solid color-mix(in srgb, var(--green) 25%, transparent);
+  }
+
+  /* ---------- COLOR LIST ---------- */
+  .color-list{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+
+  .color-row{
+    display:flex;align-items:center;gap:14px;
+    padding:12px 14px;
+    border-radius:16px;
+    transition:.2s;
+    background: color-mix(in srgb, var(--text) 6%, transparent);
+    border: 1px solid var(--glass-border);
+    cursor:pointer;
+  }
+  .color-row:active{transform:scale(.98);background: color-mix(in srgb, var(--text) 10%, transparent);}
+  .color-info{flex:1;min-width:0;}
+  .color-name{font-size:15px;font-weight:600;color:var(--text);}
+  .color-desc{font-size:12px;color:var(--muted);margin-top:2px;}
+
+  .color-swatch{
+    position:relative;
+    width:46px;height:46px;flex:none;
+    border-radius:50%;
+    overflow:hidden;
+    border:2px solid var(--glass-border);
+    cursor:pointer;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
+    /* Шахматный фон для прозрачности */
+    background-image:
+      linear-gradient(45deg, #808080 25%, transparent 25%),
+      linear-gradient(-45deg, #808080 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #808080 75%),
+      linear-gradient(-45deg, transparent 75%, #808080 75%);
+    background-size: 12px 12px;
+    background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+    background-color: #cfcfcf;
+  }
+  .color-swatch::after{
+    content:'';
+    position:absolute;inset:0;
+    background: var(--swatch-color, transparent);
+    border-radius:50%;
+    pointer-events:none;
+  }
+
+  /* ---------- GLASS CONTROLS ---------- */
+  .glass-block{margin-top:22px;}
+  .glass-block .row-label{
+    font-size:12px;font-weight:600;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.5px;
+    margin-bottom:8px;display:flex;justify-content:space-between;
+  }
+  .glass-block .row-label b{color:var(--text);font-weight:700;}
+
+  input[type=range]{
+    -webkit-appearance:none;
+    appearance:none;
+    width:100%;
+    height:28px;
+    background:transparent;
+    cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-runnable-track{
+    height:8px;
+    border-radius:4px;
+    background: color-mix(in srgb, var(--text) 12%, transparent);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    appearance:none;
+    width:22px;height:22px;
+    margin-top:-7px;
+    border-radius:50%;
+    background: linear-gradient(145deg, var(--accent), var(--accent-dark));
+    border:2px solid rgba(255,255,255,0.6);
+    box-shadow: 0 2px 8px var(--accent-glow);
+  }
+  input[type=range]::-moz-range-track{
+    height:8px;border-radius:4px;
+    background: color-mix(in srgb, var(--text) 12%, transparent);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:22px;height:22px;
+    border-radius:50%;
+    background: var(--accent);
+    border:2px solid rgba(255,255,255,0.6);
+    box-shadow: 0 2px 8px var(--accent-glow);
+  }
+
+  /* ---------- BUILT-IN COLOR PICKER ---------- */
+  .picker-preview-row{
+    display:flex;align-items:center;gap:12px;
+    margin:16px 0 10px;
+  }
+  .picker-preview{
+    width:52px;height:52px;flex:none;
+    border-radius:14px;
+    border:2px solid var(--glass-border);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
+    /* checker background под превью */
+    background-image:
+      linear-gradient(45deg, #808080 25%, transparent 25%),
+      linear-gradient(-45deg, #808080 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #808080 75%),
+      linear-gradient(-45deg, transparent 75%, #808080 75%);
+    background-size: 12px 12px;
+    background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+    background-color: #cfcfcf;
+    position:relative;
+    overflow:hidden;
+  }
+  .picker-preview::after{
+    content:'';
+    position:absolute;inset:0;
+    background: var(--preview-color, transparent);
+    border-radius:12px;
+  }
+  .picker-hex{
+    flex:1;
+    font-family: ui-monospace, Menlo, Consolas, monospace !important;
+    font-size:15px !important;
+    text-transform: lowercase;
+    letter-spacing:.3px;
+  }
+
+  .picker-sv{
+    position:relative;
+    width:100%;
+    height:200px;
+    border-radius:16px;
+    cursor:crosshair;
+    touch-action:none;
+    border:1px solid var(--glass-border);
+    overflow:hidden;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .picker-cursor{
+    position:absolute;
+    width:22px;height:22px;
+    border-radius:50%;
+    border:3px solid #fff;
+    box-shadow: 0 0 0 1.5px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.4);
+    transform:translate(-50%,-50%);
+    pointer-events:none;
+  }
+
+  .picker-hue{
+    position:relative;
+    height:26px;
+    margin-top:14px;
+    border-radius:13px;
+    background: linear-gradient(to right,
+      #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%,
+      #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    cursor:pointer;
+    touch-action:none;
+    border:1px solid var(--glass-border);
+  }
+  .picker-hue .picker-cursor{
+    border-radius:50%;
+    width:26px;height:26px;
+    top:50%;
+  }
+
+  .picker-alpha{
+    position:relative;
+    height:26px;
+    margin-top:14px;
+    border-radius:13px;
+    cursor:pointer;
+    touch-action:none;
+    overflow:hidden;
+    border:1px solid var(--glass-border);
+    background-image:
+      linear-gradient(45deg, #808080 25%, transparent 25%),
+      linear-gradient(-45deg, #808080 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #808080 75%),
+      linear-gradient(-45deg, transparent 75%, #808080 75%);
+    background-size: 14px 14px;
+    background-position: 0 0, 0 7px, 7px -7px, -7px 0px;
+    background-color: #cfcfcf;
+  }
+  .picker-alpha-grad{
+    position:absolute;inset:0;
+    background: linear-gradient(to right, transparent, #ffffff);
+    pointer-events:none;
+  }
+  .picker-alpha .picker-cursor{
+    width:26px;height:26px;
+    top:50%;
+  }
 
   .toast{
     position:fixed;left:50%;bottom:110px;transform:translate(-50%,20px);
-    background:#2a2a35;color:#fff;padding:11px 20px;border-radius:22px;
-    font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:.28s;z-index:60;
-    box-shadow:0 6px 24px rgba(0,0,0,.4);max-width:88vw;text-align:center;
+    color:#fff;padding:11px 20px;border-radius:22px;
+    font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:.28s;z-index:80;
+    max-width:88vw;text-align:center;
+    background: rgba(40,40,48,0.85);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 6px 24px rgba(0,0,0,.4), inset 0 1px 0 var(--glass-highlight);
   }
   .toast.show{opacity:1;transform:translate(-50%,0);}
 </style>
@@ -351,7 +579,11 @@
       <h1 id="hTitle">Сегодня</h1>
       <div class="subtitle" id="hDate"></div>
     </div>
-    <button class="bell" id="bell" title="Уведомления">🔔</button>
+    <div class="header-actions">
+      <button class="icon-btn" id="colorBtn" title="Настроить цвета">🎨</button>
+      <button class="icon-btn" id="themeBtn" title="Сменить тему">☀️</button>
+      <button class="icon-btn" id="bell" title="Уведомления">🔔</button>
+    </div>
   </div>
 </header>
 
@@ -374,8 +606,12 @@
 
 <button class="fab" id="fab">+</button>
 
+<!-- Overlay для панелей задач/цветов -->
 <div class="overlay" id="overlay"></div>
+<!-- Overlay для пикера (поверх color sheet) -->
+<div class="overlay overlay-picker" id="pickerOverlay"></div>
 
+<!-- Панель задачи -->
 <div class="sheet" id="sheet">
   <div class="handle"></div>
   <h2 id="sheetTitle">Новая задача</h2>
@@ -410,25 +646,527 @@
   </div>
 </div>
 
+<!-- Панель цветов -->
+<div class="sheet" id="colorSheet">
+  <div class="handle"></div>
+  <h2>Настройка цветов</h2>
+  <div class="hint">Тапни на кружок — откроется свободный пикер с градиентом. Все цвета работают в обеих темах.</div>
+
+  <div class="color-list">
+    <div class="color-row" data-key="--bg">
+      <div class="color-info">
+        <div class="color-name">Фон приложения</div>
+        <div class="color-desc">Основной цвет страницы</div>
+      </div>
+      <div class="color-swatch" id="swBg"></div>
+    </div>
+
+    <div class="color-row" data-key="--card">
+      <div class="color-info">
+        <div class="color-name">Карточки задач</div>
+        <div class="color-desc">Фон карточек в списке</div>
+      </div>
+      <div class="color-swatch" id="swCard"></div>
+    </div>
+
+    <div class="color-row" data-key="--card2">
+      <div class="color-info">
+        <div class="color-name">Стекло и кнопки</div>
+        <div class="color-desc">Подложки иконок, панелей, полей</div>
+      </div>
+      <div class="color-swatch" id="swCard2"></div>
+    </div>
+
+    <div class="color-row" data-key="--text">
+      <div class="color-info">
+        <div class="color-name">Текст</div>
+        <div class="color-desc">Основной цвет текста</div>
+      </div>
+      <div class="color-swatch" id="swText"></div>
+    </div>
+
+    <div class="color-row" data-key="--accent">
+      <div class="color-info">
+        <div class="color-name">Акцент</div>
+        <div class="color-desc">Кнопки, выбор, ссылки</div>
+      </div>
+      <div class="color-swatch" id="swAccent"></div>
+    </div>
+
+    <div class="color-row" data-key="--sheet-bg">
+      <div class="color-info">
+        <div class="color-name">Панели</div>
+        <div class="color-desc">Нижние панели редактирования</div>
+      </div>
+      <div class="color-swatch" id="swSheet"></div>
+    </div>
+  </div>
+
+  <div class="glass-block">
+    <div class="row-label"><span>Прозрачность стекла</span><b id="lblAlpha">70%</b></div>
+    <input type="range" id="glassAlpha" min="0" max="100" value="70" step="1">
+
+    <div class="row-label"><span>Размытие фона</span><b id="lblBlur">20px</b></div>
+    <input type="range" id="glassBlur" min="0" max="40" value="20" step="1">
+  </div>
+
+  <div class="actions" style="flex-direction:column">
+    <button class="btn btn-ghost" id="btnResetColors" style="width:100%">↺ Сбросить к теме</button>
+    <button class="btn btn-primary" id="btnCloseColors" style="width:100%">Готово</button>
+  </div>
+</div>
+
+<!-- Встроенный color picker -->
+<div class="sheet sheet-picker" id="pickerSheet">
+  <div class="handle"></div>
+  <h2>Точный выбор цвета</h2>
+
+  <div class="picker-sv" id="pickerSV">
+    <div class="picker-cursor" id="pickerSVCursor"></div>
+  </div>
+
+  <div class="picker-hue" id="pickerHue">
+    <div class="picker-cursor" id="pickerHueCursor"></div>
+  </div>
+
+  <div class="picker-alpha" id="pickerAlpha">
+    <div class="picker-alpha-grad" id="pickerAlphaGrad"></div>
+    <div class="picker-cursor" id="pickerAlphaCursor"></div>
+  </div>
+
+  <div class="picker-preview-row">
+    <div class="picker-preview" id="pickerPreview"></div>
+    <input type="text" class="picker-hex" id="pickerHex" maxlength="9" autocomplete="off" spellcheck="false">
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-ghost" id="pickerCancel">Отмена</button>
+    <button class="btn btn-primary" id="pickerApply">Готово</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 /* ============================================================
-   ДАННЫЕ
+   НАСТРОЙКА ЦВЕТОВ ПО УМОЛЧАНИЮ
+   ============================================================ */
+const THEME_COLORS = {
+  dark: {
+    '--bg':             '#0d0d10',
+    '--card':           'rgba(23,23,28,0.55)',
+    '--card2':          '#1c1c26',
+    '--text':           '#f2f2f5',
+    '--muted':          '#8b8b96',
+    '--muted2':         '#5e5e6a',
+    '--accent':         '#6c7bff',
+    '--accent-dark':    '#4a5ae8',
+    '--accent-glow':    'rgba(108,123,255,0.35)',
+    '--green':          '#30d158',
+    '--red':            '#ff453a',
+    '--orange':         '#ff9f0a',
+    '--border':         '#2a2a33',
+    '--sheet-bg':       '#1a1a21',
+    '--handle':         '#3a3a45',
+    '--input-focus-bg': '#242430',
+    '--check-border':   '#43434f',
+    '--glass-border':   'rgba(255,255,255,0.14)',
+    '--glass-highlight':'rgba(255,255,255,0.20)',
+  },
+  light: {
+    '--bg':             '#eef0f4',
+    '--card':           'rgba(255,255,255,0.75)',
+    '--card2':          '#eaecef',
+    '--text':           '#1c1c22',
+    '--muted':          '#66666f',
+    '--muted2':         '#a0a0aa',
+    '--accent':         '#5b6cf5',
+    '--accent-dark':    '#4453e6',
+    '--accent-glow':    'rgba(91,108,245,0.30)',
+    '--green':          '#1a9e46',
+    '--red':            '#d63027',
+    '--orange':         '#c47800',
+    '--border':         '#d2d4da',
+    '--sheet-bg':       '#f4f5f9',
+    '--handle':         '#c5c7cd',
+    '--input-focus-bg': '#f4f5f9',
+    '--check-border':   '#a8a8b4',
+    '--glass-border':   'rgba(255,255,255,0.85)',
+    '--glass-highlight':'rgba(255,255,255,0.95)',
+  }
+};
+
+const CUSTOMIZABLE = [
+  { key: '--bg',       swatch: 'swBg'     },
+  { key: '--card',     swatch: 'swCard'   },
+  { key: '--card2',    swatch: 'swCard2'  },
+  { key: '--text',     swatch: 'swText'   },
+  { key: '--accent',   swatch: 'swAccent' },
+  { key: '--sheet-bg', swatch: 'swSheet'  }
+];
+
+/* ============================================================
+   ХРАНИЛИЩЕ
    ============================================================ */
 const LS = 'diary_tasks_v1';
+const LS_THEME = 'diary_theme';
+const LS_CUSTOM = 'diary_custom_colors';
+const LS_GLASS = 'diary_glass';
+
 let tasks = [];
 try { tasks = JSON.parse(localStorage.getItem(LS)) || []; } catch(e){ tasks = []; }
 
-let currentMode = 'day';           // day | week | month
-let currentMonthDate = new Date(); // 1-е число отображаемого месяца
-let selectedDayStr = todayStr();   // выбранный день в режиме «Месяц»
+let customColors = {};
+try { customColors = JSON.parse(localStorage.getItem(LS_CUSTOM)) || {}; } catch(e){ customColors = {}; }
+
+let glassSettings = { alpha: 0.7, blur: 20 };
+try {
+  const g = JSON.parse(localStorage.getItem(LS_GLASS));
+  if(g && typeof g.alpha === 'number' && typeof g.blur === 'number'){
+    glassSettings = g;
+  }
+} catch(e){}
+
+let currentMode = 'day';
+let currentMonthDate = new Date();
+let selectedDayStr = todayStr();
 let editingId = null;
 let pickedPriority = 'normal';
+let currentTheme = 'dark';
 
 const $ = id => document.getElementById(id);
-
 function save(){ localStorage.setItem(LS, JSON.stringify(tasks)); }
+function saveCustom(){ localStorage.setItem(LS_CUSTOM, JSON.stringify(customColors)); }
+function saveGlass(){ localStorage.setItem(LS_GLASS, JSON.stringify(glassSettings)); }
+
+/* ============================================================
+   ЦВЕТ: парсинг и конвертации
+   ============================================================ */
+function parseColor(c){
+  if(!c) return { r:0, g:0, b:0, a:1 };
+  c = String(c).trim();
+  // hex (#abc, #aabbcc, #aabbccdd)
+  const hexM = c.match(/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i);
+  if(hexM){
+    let hex = hexM[1];
+    if(hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+    return {
+      r: parseInt(hex.slice(0,2), 16),
+      g: parseInt(hex.slice(2,4), 16),
+      b: parseInt(hex.slice(4,6), 16),
+      a: hex.length === 8 ? parseInt(hex.slice(6,8), 16) / 255 : 1
+    };
+  }
+  const m = c.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)/i);
+  if(m){
+    return {
+      r: +m[1], g: +m[2], b: +m[3],
+      a: m[4] !== undefined ? +m[4] : 1
+    };
+  }
+  return { r:0, g:0, b:0, a:1 };
+}
+
+function rgbaString(r, g, b, a){
+  return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${(+a).toFixed(2)})`;
+}
+function rgbToHex(r, g, b){
+  const h = n => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2,'0');
+  return '#' + h(r) + h(g) + h(b);
+}
+
+function rgbToHsv(r, g, b){
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const d = max - min;
+  let h = 0;
+  if(d !== 0){
+    if(max === r)      h = ((g - b) / d) % 6;
+    else if(max === g) h = ((b - r) / d) + 2;
+    else               h = ((r - g) / d) + 4;
+    h *= 60;
+    if(h < 0) h += 360;
+  }
+  return { h, s: max === 0 ? 0 : d / max * 100, v: max * 100 };
+}
+
+function hsvToRgb(h, s, v){
+  h = ((h % 360) + 360) % 360;
+  s = Math.max(0, Math.min(100, s)) / 100;
+  v = Math.max(0, Math.min(100, v)) / 100;
+  const c = v * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = v - c;
+  let r, g, b;
+  if(h < 60)      [r, g, b] = [c, x, 0];
+  else if(h < 120)[r, g, b] = [x, c, 0];
+  else if(h < 180)[r, g, b] = [0, c, x];
+  else if(h < 240)[r, g, b] = [0, x, c];
+  else if(h < 300)[r, g, b] = [x, 0, c];
+  else            [r, g, b] = [c, 0, x];
+  return {
+    r: Math.round((r + m) * 255),
+    g: Math.round((g + m) * 255),
+    b: Math.round((b + m) * 255)
+  };
+}
+
+function getCurrentEffectiveColor(key){
+  if(customColors[key]) return customColors[key];
+  return THEME_COLORS[currentTheme][key] || THEME_COLORS.dark[key] || '#000000';
+}
+
+/* ============================================================
+   ПРИМЕНЕНИЕ ТЕМЫ, ЦВЕТОВ И СТЕКЛА
+   ============================================================ */
+function applyTheme(name){
+  if(!THEME_COLORS[name]) name = 'dark';
+  const palette = THEME_COLORS[name];
+  const root = document.documentElement;
+
+  // Сброс и установка базовой палитры
+  Object.keys(THEME_COLORS.dark).forEach(k => root.style.removeProperty(k));
+  Object.entries(palette).forEach(([k, v]) => root.style.setProperty(k, v));
+
+  // Пользовательские цвета поверх темы
+  Object.entries(customColors).forEach(([k, v]) => {
+    if(v) root.style.setProperty(k, v);
+  });
+
+  document.body.setAttribute('data-theme', name);
+  currentTheme = name;
+
+  // Иконка темы
+  const btn = $('themeBtn');
+  if(btn){
+    btn.textContent = name === 'dark' ? '☀️' : '🌙';
+    btn.title = name === 'dark' ? 'Светлая тема' : 'Тёмная тема';
+  }
+
+  // Статус-бар iOS
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta){
+    const src = customColors['--bg'] || palette['--bg'];
+    const p = parseColor(src);
+    meta.setAttribute('content', rgbToHex(p.r, p.g, p.b));
+  }
+  const statusMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+  if(statusMeta) statusMeta.setAttribute('content', name === 'dark' ? 'black-translucent' : 'default');
+
+  localStorage.setItem(LS_THEME, name);
+}
+
+function applyGlass(){
+  const root = document.documentElement;
+  root.style.setProperty('--glass-alpha-pct', Math.round(glassSettings.alpha * 100) + '%');
+  root.style.setProperty('--glass-blur', glassSettings.blur + 'px');
+  const la = $('lblAlpha'), lb = $('lblBlur');
+  if(la) la.textContent = Math.round(glassSettings.alpha * 100) + '%';
+  if(lb) lb.textContent = glassSettings.blur + 'px';
+}
+
+function toggleTheme(){
+  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+  if(navigator.vibrate) navigator.vibrate(8);
+}
+
+/* ============================================================
+   ПАНЕЛЬ ЦВЕТОВ
+   ============================================================ */
+function refreshSwatches(){
+  CUSTOMIZABLE.forEach(item => {
+    const sw = $(item.swatch);
+    if(!sw) return;
+    const color = getCurrentEffectiveColor(item.key);
+    sw.style.setProperty('--swatch-color', color);
+  });
+}
+
+function openColorSheet(){
+  refreshSwatches();
+  applyGlass();
+  $('overlay').classList.add('show');
+  $('colorSheet').classList.add('show');
+}
+function closeColorSheet(){
+  $('overlay').classList.remove('show');
+  $('colorSheet').classList.remove('show');
+}
+
+$('colorBtn').onclick = openColorSheet;
+$('btnCloseColors').onclick = closeColorSheet;
+
+$('btnResetColors').onclick = () => {
+  customColors = {};
+  saveCustom();
+  glassSettings = { alpha: 0.7, blur: 20 };
+  saveGlass();
+  applyTheme(currentTheme);
+  applyGlass();
+  refreshSwatches();
+  $('glassAlpha').value = 70;
+  $('glassBlur').value = 20;
+  toast('Цвета и стекло сброшены к теме');
+};
+
+// Слайдеры стекла
+$('glassAlpha').addEventListener('input', e => {
+  glassSettings.alpha = (+e.target.value) / 100;
+  saveGlass();
+  applyGlass();
+});
+$('glassBlur').addEventListener('input', e => {
+  glassSettings.blur = +e.target.value;
+  saveGlass();
+  applyGlass();
+});
+
+/* ============================================================
+   ВСТРОЕННЫЙ ЦВЕТОВОЙ ПИКЕР
+   ============================================================ */
+const picker = {
+  h: 220, s: 80, v: 100, a: 1,
+  targetKey: null
+};
+
+const pickerSV = $('pickerSV');
+const pickerSVCursor = $('pickerSVCursor');
+const pickerHue = $('pickerHue');
+const pickerHueCursor = $('pickerHueCursor');
+const pickerAlpha = $('pickerAlpha');
+const pickerAlphaCursor = $('pickerAlphaCursor');
+const pickerAlphaGrad = $('pickerAlphaGrad');
+const pickerPreview = $('pickerPreview');
+const pickerHex = $('pickerHex');
+
+function openPicker(key){
+  picker.targetKey = key;
+  const current = getCurrentEffectiveColor(key);
+  const { r, g, b, a } = parseColor(current);
+  const hsv = rgbToHsv(r, g, b);
+  picker.h = hsv.h;
+  picker.s = hsv.s;
+  picker.v = hsv.v;
+  picker.a = a;
+
+  updatePickerUI();
+
+  $('pickerOverlay').classList.add('show');
+  $('pickerSheet').classList.add('show');
+}
+
+function closePicker(){
+  $('pickerOverlay').classList.remove('show');
+  $('pickerSheet').classList.remove('show');
+  picker.targetKey = null;
+}
+
+function updatePickerUI(){
+  // Фон SV: сначала чёрный снизу-вверх (V), затем белый-цвет слева-направо (S)
+  const base = hsvToRgb(picker.h, 100, 100);
+  pickerSV.style.background = `
+    linear-gradient(to top, #000, transparent),
+    linear-gradient(to right, #fff, rgb(${base.r},${base.g},${base.b}))
+  `;
+
+  // Курсор SV
+  pickerSVCursor.style.left = picker.s + '%';
+  pickerSVCursor.style.top = (100 - picker.v) + '%';
+
+  // Курсор Hue
+  pickerHueCursor.style.left = (picker.h / 360 * 100) + '%';
+
+  // Курсор Alpha
+  pickerAlphaCursor.style.left = (picker.a * 100) + '%';
+
+  // Градиент альфы
+  const cur = hsvToRgb(picker.h, picker.s, picker.v);
+  pickerAlphaGrad.style.background =
+    `linear-gradient(to right, transparent, rgb(${cur.r},${cur.g},${cur.b}))`;
+
+  // Превью
+  pickerPreview.style.setProperty('--preview-color',
+    rgbaString(cur.r, cur.g, cur.b, picker.a));
+
+  // Hex
+  pickerHex.value = rgbToHex(cur.r, cur.g, cur.b);
+}
+
+// Drag-хелпер
+function attachDrag(el, handler){
+  let active = false;
+  el.addEventListener('pointerdown', e => {
+    active = true;
+    try { el.setPointerCapture(e.pointerId); } catch(_){}
+    handler(e);
+  });
+  el.addEventListener('pointermove', e => { if(active) handler(e); });
+  el.addEventListener('pointerup', e => {
+    active = false;
+    try { el.releasePointerCapture(e.pointerId); } catch(_){}
+  });
+  el.addEventListener('pointercancel', () => { active = false; });
+}
+
+attachDrag(pickerSV, e => {
+  const rect = pickerSV.getBoundingClientRect();
+  const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
+  picker.s = x * 100;
+  picker.v = (1 - y) * 100;
+  updatePickerUI();
+});
+
+attachDrag(pickerHue, e => {
+  const rect = pickerHue.getBoundingClientRect();
+  const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  picker.h = x * 360;
+  updatePickerUI();
+});
+
+attachDrag(pickerAlpha, e => {
+  const rect = pickerAlpha.getBoundingClientRect();
+  const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  picker.a = x;
+  updatePickerUI();
+});
+
+// Ввод hex вручную
+pickerHex.addEventListener('input', () => {
+  const v = pickerHex.value.trim();
+  if(/^#?[0-9a-f]{6}$/i.test(v)){
+    const hex = v.startsWith('#') ? v : '#' + v;
+    const p = parseColor(hex);
+    const hsv = rgbToHsv(p.r, p.g, p.b);
+    picker.h = hsv.h; picker.s = hsv.s; picker.v = hsv.v;
+    updatePickerUI();
+  }
+});
+pickerHex.addEventListener('blur', () => {
+  // При потере фокуса — вернуть корректный hex
+  const cur = hsvToRgb(picker.h, picker.s, picker.v);
+  pickerHex.value = rgbToHex(cur.r, cur.g, cur.b);
+});
+
+$('pickerCancel').onclick = closePicker;
+$('pickerOverlay').onclick = closePicker;
+
+$('pickerApply').onclick = () => {
+  if(!picker.targetKey){ closePicker(); return; }
+  const { r, g, b } = hsvToRgb(picker.h, picker.s, picker.v);
+  const rgba = rgbaString(r, g, b, picker.a);
+  customColors[picker.targetKey] = rgba;
+  saveCustom();
+  applyTheme(currentTheme);
+  refreshSwatches();
+  closePicker();
+  if(navigator.vibrate) navigator.vibrate(8);
+};
+
+// Открытие пикера — клик по строке цвета или по свотчу
+document.querySelectorAll('.color-row[data-key]').forEach(row => {
+  row.addEventListener('click', () => openPicker(row.dataset.key));
+});
 
 /* ============================================================
    ДАТЫ
@@ -447,16 +1185,6 @@ const WD_SHORT     = ['вс','пн','вт','ср','чт','пт','сб'];
 const WD_FULL      = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
 const WD_UPPER     = ['ВОСКРЕСЕНЬЕ','ПОНЕДЕЛЬНИК','ВТОРНИК','СРЕДА','ЧЕТВЕРГ','ПЯТНИЦА','СУББОТА'];
 
-function humanDate(str){
-  const today = todayStr();
-  const tmr = todayStr(new Date(Date.now()+864e5));
-  const yst = todayStr(new Date(Date.now()-864e5));
-  if(str === today) return 'Сегодня';
-  if(str === tmr)   return 'Завтра';
-  if(str === yst)   return 'Вчера';
-  const d = new Date(str+'T00:00');
-  return d.getDate()+' '+MONTHS_SHORT[d.getMonth()]+', '+WD_SHORT[d.getDay()];
-}
 function humanHeader(){
   const d = new Date();
   return WD_FULL[d.getDay()] + ', ' + d.getDate() + ' ' + MONTHS_FULL[d.getMonth()];
@@ -472,10 +1200,9 @@ function weekRangeLabel(){
 }
 
 /* ============================================================
-   РЕНДЕР ГЛАВНЫЙ
+   РЕНДЕР
    ============================================================ */
 function render(){
-  // Заголовок в шапке — контекстный
   const titles = {day:'Сегодня', week:'Неделя', month:'Календарь'};
   $('hTitle').textContent = titles[currentMode];
 
@@ -490,13 +1217,9 @@ function render(){
                              currentMonthDate.getFullYear();
     renderMonth();
   }
-
   updateStats();
 }
 
-/* ============================================================
-   DAY
-   ============================================================ */
 function renderDay(){
   const today = todayStr();
   const items = tasks
@@ -510,14 +1233,10 @@ function renderDay(){
   $('list').innerHTML = items.map(t => taskHTML(t)).join('');
 }
 
-/* ============================================================
-   WEEK
-   ============================================================ */
 function renderWeek(){
   const today = todayStr();
   const tmr   = todayStr(new Date(Date.now()+864e5));
   let html = '';
-  let anyTask = false;
 
   for(let i = 0; i < 7; i++){
     const d = new Date();
@@ -527,8 +1246,6 @@ function renderWeek(){
     const dayTasks = tasks
       .filter(t => t.date === ds)
       .sort((a,b)=> (a.time||'').localeCompare(b.time||''));
-
-    if(dayTasks.length) anyTask = true;
 
     let dayName;
     if(ds === today) dayName = 'Сегодня';
@@ -550,38 +1267,29 @@ function renderWeek(){
     }
     html += `</div>`;
   }
-
   $('list').innerHTML = html;
 }
 
-/* ============================================================
-   MONTH
-   ============================================================ */
 function renderMonth(){
   const y = currentMonthDate.getFullYear();
   const m = currentMonthDate.getMonth();
   const today = todayStr();
 
-  // счётчик задач по датам (для точек)
   const countByDate = {};
   tasks.forEach(t => { countByDate[t.date] = (countByDate[t.date] || 0) + 1; });
 
-  // сетка 7×N
   const first = new Date(y, m, 1);
-  const startWd = (first.getDay() + 6) % 7; // 0 = Пн
+  const startWd = (first.getDay() + 6) % 7;
   const daysInMonth = new Date(y, m+1, 0).getDate();
   const daysInPrev  = new Date(y, m, 0).getDate();
 
   const cells = [];
-  // хвост прошлого месяца
   for(let i = startWd - 1; i >= 0; i--){
     cells.push({ d: new Date(y, m-1, daysInPrev - i), other: true });
   }
-  // текущий месяц
   for(let i = 1; i <= daysInMonth; i++){
     cells.push({ d: new Date(y, m, i), other: false });
   }
-  // начало следующего, чтобы дополнить неделю
   let next = 1;
   while(cells.length % 7 !== 0){
     cells.push({ d: new Date(y, m+1, next++), other: true });
@@ -608,7 +1316,6 @@ function renderMonth(){
     </button>`;
   });
 
-  // задачи выбранного дня
   const selD = new Date(selectedDayStr + 'T00:00');
   const selLabel = selD.getDate() + ' ' + MONTHS_FULL[selD.getMonth()] + ', ' + WD_SHORT[selD.getDay()];
   const selTasks = tasks
@@ -636,9 +1343,6 @@ function renderMonth(){
   `;
 }
 
-/* ============================================================
-   HTML-ХЕЛПЕРЫ
-   ============================================================ */
 function taskHTML(t){
   const now = Date.now();
   const dt = taskDT(t).getTime();
@@ -668,7 +1372,7 @@ function esc(s){
 }
 
 /* ============================================================
-   СТАТИСТИКА (зависит от режима)
+   СТАТИСТИКА
    ============================================================ */
 function updateStats(){
   let done = 0, total = 0, label = 'задач';
@@ -707,7 +1411,6 @@ function updateStats(){
    КЛИКИ
    ============================================================ */
 $('list').addEventListener('click', e => {
-  // 1) Отметка выполнения
   const chk = e.target.closest('[data-check]');
   if(chk){
     const t = tasks.find(x => x.id === chk.dataset.check);
@@ -720,19 +1423,15 @@ $('list').addEventListener('click', e => {
     return;
   }
 
-  // 2) Навигация по месяцам
   const nav = e.target.closest('.mn-btn');
   if(nav){
     const dir = parseInt(nav.dataset.dir, 10);
     currentMonthDate = new Date(currentMonthDate.getFullYear(),
                                  currentMonthDate.getMonth() + dir, 1);
-    // если в новом месяце есть сегодня — оставим выделение,
-    // иначе оставим выбранный день как есть (пользователь сам выберет)
     render();
     return;
   }
 
-  // 3) Выбор дня в календаре
   const cell = e.target.closest('.day-cell');
   if(cell && cell.dataset.date){
     selectedDayStr = cell.dataset.date;
@@ -745,13 +1444,12 @@ $('list').addEventListener('click', e => {
     return;
   }
 
-  // 4) Открытие задачи
   const card = e.target.closest('.task');
   if(card) openSheet(card.dataset.id);
 });
 
 /* ============================================================
-   ПЕРЕКЛЮЧАТЕЛЬ РЕЖИМОВ
+   РЕЖИМЫ
    ============================================================ */
 $('viewSwitch').addEventListener('click', e => {
   const b = e.target.closest('button');
@@ -798,7 +1496,6 @@ function openSheet(id){
     $('btnDoneToggle').textContent = t.done ? 'Вернуть в работу' : 'Отметить выполненной';
   } else {
     $('fTitle').value = '';
-    // если в календаре выбран день — использовать его как дату по умолчанию
     if(currentMode === 'month' && selectedDayStr) $('fDate').value = selectedDayStr;
     else $('fDate').value = todayStr();
     $('fTime').value = '09:00';
@@ -819,7 +1516,7 @@ function closeSheet(){
 }
 
 $('fab').onclick = () => openSheet(null);
-$('overlay').onclick = closeSheet;
+$('overlay').onclick = () => { closeSheet(); closeColorSheet(); };
 $('btnCancel').onclick = closeSheet;
 
 $('btnSave').onclick = () => {
@@ -848,7 +1545,6 @@ $('btnSave').onclick = () => {
     });
   }
 
-  // Если добавили задачу на дату в другом месяце — перейти к нему
   if(!wasEdit && currentMode === 'month'){
     const nd = new Date(data.date + 'T00:00');
     if(nd.getMonth() !== currentMonthDate.getMonth() ||
@@ -925,7 +1621,7 @@ document.addEventListener('visibilitychange', () => {
 });
 
 /* ============================================================
-   ЭКСПОРТ В КАЛЕНДАРЬ (.ics)
+   ЭКСПОРТ .ICS
    ============================================================ */
 function icsEscape(s){
   return String(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
@@ -978,6 +1674,20 @@ function toast(msg){
 /* ============================================================
    СТАРТ
    ============================================================ */
+(function initTheme(){
+  let saved = 'dark';
+  try { saved = localStorage.getItem(LS_THEME) || 'dark'; } catch(e){}
+  if(!THEME_COLORS[saved]) saved = 'dark';
+  applyTheme(saved);
+})();
+applyGlass();
+
+// Заполняем слайдеры из сохранённых настроек
+$('glassAlpha').value = Math.round(glassSettings.alpha * 100);
+$('glassBlur').value  = glassSettings.blur;
+
+$('themeBtn').addEventListener('click', toggleTheme);
+
 updateBell();
 render();
 setTimeout(checkNotifications, 1500);
